@@ -56,7 +56,7 @@ RUN git clone https://github.com/heartsh/raf-fixed /tmp/raf-fixed
 WORKDIR /tmp/raf-fixed
 RUN make -j$(nproc)
 RUN cp raf /usr/local/bin
-RUN echo -e "\nexport CONTRAFOLD_DIR=/usr/local/miniconda/bin" >> /root/.zshrc
+RUN echo -e "\nexport CONTRAFOLD_DIR=/usr/local/anaconda/bin" >> /root/.zshrc
 RUN echo -e "\nexport CONTRALIGN_DIR=/usr/local/bin" >> /root/.zshrc
 RUN git clone https://github.com/LinearFold/LinearTurboFold /tmp/LinearTurboFold
 WORKDIR /tmp/LinearTurboFold
@@ -66,8 +66,8 @@ RUN wget -nd -np -P /tmp https://github.com/satoken/dafs/archive/refs/tags/v0.0.
 RUN tar -xf /tmp/v0.0.3.tar.gz -C /tmp
 WORKDIR /tmp/dafs-0.0.3
 RUN ./configure --with-vienna-rna=$(which RNAfold | sed -E "s/\/bin\/.+//") --with-glpk && make -j$(nproc) && make install
-RUN rm -rf /tmp/*
 RUN apt-get clean -y && apt-get autoremove -y
 RUN conda clean --all -y
+RUN rm -rf /tmp/*
 ENTRYPOINT zsh
 WORKDIR /root 
