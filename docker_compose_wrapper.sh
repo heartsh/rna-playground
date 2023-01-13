@@ -5,12 +5,14 @@ shift
 
 case $SUBCOMMAND in
   win)
-    docker-compose up wslg -d && sleep 3 && docker ps -l \
-    | grep "(healthy)" || echo "Warning: some package(s) cannot be installed properly"
+    docker-compose up win -d && sleep 3 && docker ps -l \
+    | grep -q "(healthy)" || echo "Warning: some package(s) cannot be installed properly"
+    docker rm $(docker ps -lq) -f > /dev/null
     ;;
   mac)
     docker-compose up mac -d && sleep 3 && docker ps -l \
-    | grep "(healthy)" || echo "Warning: some package(s) cannot be installed properly"
+    | grep -q "(healthy)" || echo "Warning: some package(s) cannot be installed properly"
+    docker rm $(docker ps -lq) -f > /dev/null
     ;;
   *)
     echo "The supplied subcommand is invalid"
