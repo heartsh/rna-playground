@@ -16,3 +16,10 @@ services:
       - $HOME/.vimrc:/root/.vimrc
       - $HOME/.vim:/root/.vim
       - $HOME/solutions:/root/solutions
+      - ./healthcheck.sh:/root/healthcheck.sh
+    healthcheck:
+      test: "/root/healthcheck.sh"
+      interval: 1s
+      timeout: 1s
+      retries: 3
+      start_period: 0s
