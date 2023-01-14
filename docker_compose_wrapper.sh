@@ -12,7 +12,7 @@ case $OS in
     docker rm $(docker ps -lq) -f > /dev/null
     ;;
   Darwin*)
-    echo "Mac OS X is detected"
+    echo "macOS is detected"
     docker-compose up -d mac && sleep 3 && docker ps -l \
     | grep -q "(healthy)" && echo $SUCCESS_STR || echo $WARNING_STR
     docker rm $(docker ps -lq) -f > /dev/null
