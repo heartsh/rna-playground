@@ -1,6 +1,8 @@
 *
 !**/
+!*.sh
+!*.png
 !.gitignore
 !Dockerfile
 !docker-compose.yml
-!*.sh
+!README.md
