@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get install git curl wget zsh build-essential \
     clustalw probcons libboost-all-dev pkg-config bzip2 \
-    vim cmake libglpk-dev -y
+    vim cmake libglpk-dev infernal -y
 SHELL ["/bin/zsh", "-c"]
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN sed -E -i "s/^ZSH_THEME=\"[a-zA-Z]+\"$/ZSH_THEME=\"ys\"/" /root/.zshrc
@@ -22,8 +22,6 @@ RUN sh $(cat $LATEST_ANACONDA_INSTALLER) -b -p /usr/local/anaconda
 ENV PATH $PATH:/usr/local/anaconda/bin
 RUN conda update conda -y
 RUN conda update --all -y
-RUN git clone https://github.com/VundleVim/Vundle.vim.git /root/.vim/bundle/Vundle.vim
-RUN vim +PluginInstall +qall
 RUN conda config --add channels defaults
 RUN conda config --add channels bioconda
 RUN conda config --add channels conda-forge
@@ -36,22 +34,26 @@ ENV PATH /root/.cargo/bin:$PATH
 # If the following command fails, please remove RUSTFLAGS='...' to disable advanced installation options
 RUN RUSTFLAGS='--emit asm -C target-feature=+avx -C target-feature=+ssse3 -C target-feature=+mmx' \
     cargo install consprob consalifold consprob-trained consalign
-RUN wget -nd -np -P /tmp https://www.tbi.univie.ac.at/RNA/download/sourcecode/2_4_x/ViennaRNA-2.4.18.tar.gz
-RUN tar -xf /tmp/ViennaRNA-2.4.18.tar.gz -C /tmp
-WORKDIR /tmp/ViennaRNA-2.4.18
+ENV VIENNARNA ViennaRNA-2.4.18
+RUN wget -nd -np -P /tmp https://www.tbi.univie.ac.at/RNA/download/sourcecode/2_4_x/$VIENNARNA.tar.gz
+RUN tar -xf /tmp/$VIENNARNA.tar.gz -C /tmp
+WORKDIR /tmp/$VIENNARNA
 RUN ./configure && make -j$(nproc) && make install
-RUN wget -nd -np -P /tmp https://mafft.cbrc.jp/alignment/software/mafft-7.490-with-extensions-src.tgz
-RUN tar -xf /tmp/mafft-7.490-with-extensions-src.tgz -C /tmp
-WORKDIR /tmp/mafft-7.490-with-extensions/core
+ENV MAFFT mafft-7.490
+RUN wget -nd -np -P /tmp https://mafft.cbrc.jp/alignment/software/$MAFFT-with-extensions-src.tgz
+RUN tar -xf /tmp/$MAFFT-with-extensions-src.tgz -C /tmp
+WORKDIR /tmp/$MAFFT-with-extensions/core
 RUN make clean && make -j$(nproc) && make install
-WORKDIR /tmp/mafft-7.490-with-extensions/extensions
+WORKDIR /tmp/$MAFFT-with-extensions/extensions
 RUN make clean && make -j$(nproc) && make install
-RUN wget -nd -np -P /tmp https://github.com/satoken/centroid-rna-package/archive/refs/tags/v0.0.16.tar.gz
-RUN tar -xf /tmp/v0.0.16.tar.gz -C /tmp
-WORKDIR /tmp/centroid-rna-package-0.0.16
+ENV CENTROID_VERSION 0.0.16
+RUN wget -nd -np -P /tmp https://github.com/satoken/centroid-rna-package/archive/refs/tags/v$CENTROID_VERSION.tar.gz
+RUN tar -xf /tmp/v$CENTROID_VERSION.tar.gz -C /tmp
+WORKDIR /tmp/centroid-rna-package-$CENTROID_VERSION
 RUN ./configure && make -j$(nproc) && make install
-RUN wget -nd -np -P /tmp https://rth.dk/resources/petfold/download/PETfold2.1.tar.gz
-RUN tar -xf /tmp/PETfold2.1.tar.gz -C /tmp
+ENV PETFOLD PETfold2.1.tar.gz
+RUN wget -nd -np -P /tmp https://rth.dk/resources/petfold/download/$PETFOLD
+RUN tar -xf /tmp/$PETFOLD -C /tmp
 WORKDIR /tmp/PETfold/src
 RUN make clean && make -j$(nproc)
 RUN cp ../bin/* /usr/local/bin
@@ -66,13 +68,15 @@ RUN make -j$(nproc)
 RUN cp raf /usr/local/bin
 RUN echo -e "\nexport CONTRAFOLD_DIR=/usr/local/anaconda/bin" >> /root/.zshrc
 RUN echo -e "\nexport CONTRALIGN_DIR=/usr/local/bin" >> /root/.zshrc
-RUN git clone https://github.com/LinearFold/LinearTurboFold /tmp/LinearTurboFold
-WORKDIR /tmp/LinearTurboFold
+ENV LINEAR_TURBOFOLD_PATH /usr/local/linear_turbofold
+RUN git clone https://github.com/LinearFold/LinearTurboFold $LINEAR_TURBOFOLD_PATH
+WORKDIR $LINEAR_TURBOFOLD_PATH
 RUN make -j$(nproc)
-RUN cp linearturbofold /usr/local/bin
-RUN wget -nd -np -P /tmp https://github.com/satoken/dafs/archive/refs/tags/v0.0.3.tar.gz
-RUN tar -xf /tmp/v0.0.3.tar.gz -C /tmp
-WORKDIR /tmp/dafs-0.0.3
+ENV PATH $PATH:$LINEAR_TURBOFOLD_PATH
+ENV DAFS_VERSION 0.0.3
+RUN wget -nd -np -P /tmp https://github.com/satoken/dafs/archive/refs/tags/v$DAFS_VERSION.tar.gz
+RUN tar -xf /tmp/v$DAFS_VERSION.tar.gz -C /tmp
+WORKDIR /tmp/dafs-$DAFS_VERSION
 RUN ./configure --with-vienna-rna=$(which RNAfold | sed -E "s/\/bin\/.+//") \
     --with-glpk && make -j$(nproc) && make install
 RUN apt-get clean -y && apt-get autoremove -y
