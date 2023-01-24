@@ -15,6 +15,7 @@ services:
       - $HOME/.ssh:/root/.ssh
       - $HOME/.vimrc:/root/.vimrc
       - $HOME/.vim:/root/.vim
+      - $HOME/.gitconfig:/root/.gitconfig
       - $HOME/solutions:/root/solutions
       - ./healthcheck.sh:/root/healthcheck.sh
     healthcheck:
@@ -33,6 +34,7 @@ services:
       - $HOME/.ssh:/root/.ssh
       - $HOME/.vimrc:/root/.vimrc
       - $HOME/.vim:/root/.vim
+      - $HOME/.gitconfig:/root/.gitconfig
       - $HOME/solutions:/root/solutions
       - ./healthcheck.sh:/root/healthcheck.sh
     healthcheck:
