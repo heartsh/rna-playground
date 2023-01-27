@@ -18,7 +18,9 @@ case $OS in
     docker rm $(docker ps -lq) -f > /dev/null
     ;;
   *)
-    echo "Your OS is unsupported in this script; abort"
-    exit 1
+    echo "Your OS is unsupported in this script; GUI features and some mounts are unavailable"
+    docker-compose up -d others && sleep 3 && docker ps -l \
+    | grep -q "(healthy)" && echo $SUCCESS_STR || echo $WARNING_STR
+    docker rm $(docker ps -lq) -f > /dev/null
     ;;
 esac
