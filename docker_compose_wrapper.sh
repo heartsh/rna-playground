@@ -20,8 +20,6 @@ case $OS in
     ;;
 esac
 
-if false; then
-  docker-compose up -d $sys && sleep 3 && docker ps -l \
-  | grep -q "(healthy)" && echo $SUCCESS_STR || echo $WARNING_STR
-  docker rm $(docker ps -lq) -f > /dev/null
-fi
+docker-compose up -d $sys && sleep 3 && docker ps -l \
+| grep -q "(healthy)" && echo $SUCCESS_STR || echo $WARNING_STR
+docker rm $(docker ps -lq) -f > /dev/null
