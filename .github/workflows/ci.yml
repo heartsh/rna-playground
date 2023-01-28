@@ -12,4 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Healthcheck
-        run: ./docker_compose_wrapper.sh
+        run: |
+          ./docker_compose_wrapper.sh \
+            | grep "Success" \
+            || exit 1
