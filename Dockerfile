@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get install git curl wget zsh build-essential \
     clustalw probcons libboost-all-dev pkg-config bzip2 \
-    vim cmake libglpk-dev infernal -y
+    vim cmake libglpk-dev infernal gnuplot -y
 SHELL ["/bin/zsh", "-c"]
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 RUN sed -E -i "s/^ZSH_THEME=\"[a-zA-Z]+\"$/ZSH_THEME=\"ys\"/" /root/.zshrc
