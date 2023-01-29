@@ -1,5 +1,0 @@
-name: "RNA Playground"
-description: "Docker-based Playground for RNA Software"
-runs:
-  using: "docker"
-  image: "Dockerfile"
